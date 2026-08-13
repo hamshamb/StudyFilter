@@ -1,0 +1,21 @@
+# The format of this file is identical to `.dockerignore`.
+# It is used to reduce the size of deployed images to make the process of publishing faster.
+
+# No need to store the pnpm store twice.
+.local
+
+# Git history is ~1.4 GB (the PDFs under artifacts/api-server/data/pdfs are
+# tracked) and is never read at runtime. Shipping it made the Repl layer push
+# time out during deploy.
+.git
+
+# Agent/workspace scratch state — not used by the running app.
+.agents
+agents
+
+# 1.09 GB of PDFs (1,036 MB of it under selfstudys/pyq). Shipping these in the
+# Repl layer exceeded the registry blob limit -> HTTP 413 on deploy. They are
+# also unreachable in production today: the serving code resolves them via
+# process.cwd(), which is the repo root in prod, not artifacts/api-server.
+# These need to move to Object Storage.
+artifacts/api-server/data/pdfs

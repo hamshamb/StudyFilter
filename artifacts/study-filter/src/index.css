@@ -1,0 +1,1066 @@
+@layer theme, base, clerk, components, utilities;
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "@clerk/themes/shadcn.css";
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   StudyFilter design tokens
+   ───────────────────────────────────────────────────────────────────────────
+   One source of truth for colour, radius, elevation, motion and type. Nothing
+   in the app should hardcode a hex value, a shadow or a duration; if a screen
+   needs something that isn't here, the token is missing, not the screen.
+
+   The palette is deliberately small. One brand colour (indigo) carries every
+   primary action; green, amber and red are reserved for *states* (correct,
+   earned, wrong) and never used decoratively. Subject colours are the only
+   other hues, and they exist to make a subject recognisable at a glance —
+   they are used as a 3px rule or a tinted chip, never as a card fill.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-card-border: hsl(var(--card-border));
+
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-popover-border: hsl(var(--popover-border));
+
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-primary-border: var(--primary-border);
+
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-secondary-border: var(--secondary-border);
+
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-muted-border: var(--muted-border);
+
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-accent-border: var(--accent-border);
+
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-destructive-soft: hsl(var(--destructive-soft));
+  --color-destructive-border: var(--destructive-border);
+
+  --color-success: hsl(var(--success));
+  --color-success-soft: hsl(var(--success-soft));
+  --color-success-foreground: hsl(var(--success-foreground));
+  --color-warning: hsl(var(--warning));
+  --color-warning-soft: hsl(var(--warning-soft));
+  --color-warning-foreground: hsl(var(--warning-foreground));
+
+  /*
+   * Sidebar surface.
+   *
+   * sidebar.tsx has always applied `bg-sidebar`, `text-sidebar-foreground`,
+   * `hover:bg-sidebar-accent` and `data-[active=true]:bg-sidebar-accent` —
+   * but no --color-sidebar* was ever registered here, so every one of those
+   * utilities compiled to nothing. The sidebar had no surface of its own,
+   * menu items had no hover, and the *active page was never highlighted*:
+   * navigation could not tell you where you were. These are the missing
+   * definitions.
+   */
+  --color-sidebar: hsl(var(--sidebar));
+  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+  --color-sidebar-border: hsl(var(--sidebar-border));
+  --color-sidebar-accent: hsl(var(--sidebar-accent));
+  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
+  --color-sidebar-primary: hsl(var(--sidebar-primary));
+  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
+  --color-sidebar-ring: hsl(var(--sidebar-ring));
+
+  /* Subject identity. Recognition only — never a page-wide theme. */
+  --color-subject-math: hsl(var(--subject-math));
+  --color-subject-science: hsl(var(--subject-science));
+  --color-subject-social: hsl(var(--subject-social));
+  --color-subject-english: hsl(var(--subject-english));
+  --color-subject-hindi: hsl(var(--subject-hindi));
+
+  --font-sans: var(--app-font-sans);
+  --font-serif: var(--app-font-serif);
+  --font-mono: var(--app-font-mono);
+
+  /*
+   * Radius scale: 6 / 8 / 10 / 14 / 18px.
+   *
+   * The old 2xl step was 20px, and because it was the largest it became the
+   * default reach for anything that wanted to look "designed" — every panel,
+   * stat, empty state and hero shared one very round corner, which is what
+   * made the app read as a pile of pills. 18px is the ceiling now, and the
+   * shared components use lg/xl.
+   */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+
+  /* Elevation. Borders do the structural work; shadows only lift. */
+  --shadow-xs: var(--sf-shadow-xs);
+  --shadow-sm: var(--sf-shadow-sm);
+  --shadow-md: var(--sf-shadow-md);
+  --shadow-lg: var(--sf-shadow-lg);
+
+  /* Motion. Everything interactive lands in 120–240ms. */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+:root {
+  --button-outline: hsl(220 13% 88%);
+  --badge-outline: hsl(220 13% 90%);
+  --opaque-button-border-intensity: -8;
+  --elevate-1: rgb(21 23 26 / 0.035);
+  --elevate-2: rgb(21 23 26 / 0.07);
+
+  /* ── Light: "Desk" ─────────────────────────────────────────────────────
+     A cool paper-white workspace. Surfaces separate by lightness and a hair
+     of border, not by shadow. */
+  --background: 220 23% 97%;      /* #F7F8FA */
+  --foreground: 216 11% 9%;       /* #15171A */
+
+  --card: 0 0% 100%;              /* #FFFFFF */
+  --card-foreground: 216 11% 9%;
+  --card-border: 220 13% 91%;     /* #E5E7EB */
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 216 11% 9%;
+  --popover-border: 220 13% 89%;
+
+  --primary: 243 90% 66%;         /* #625BF6 */
+  --primary-foreground: 0 0% 100%;
+
+  --secondary: 244 60% 96%;
+  --secondary-foreground: 244 52% 44%;
+
+  --muted: 210 17% 95%;           /* #F1F3F5 */
+  --muted-foreground: 220 9% 46%; /* #6B7280 */
+
+  /*
+   * `accent` is shadcn's *hover surface* — dropdown items, menubar, select,
+   * command and calendar all fill with it on focus. It used to be a
+   * saturated terracotta with white text, so opening any menu in the app
+   * produced a row of solid orange bars. It is a neutral surface now, and
+   * the few places that wanted an actual accent colour (the focus timer)
+   * use `warning`, which is what "time running" should read as anyway.
+   */
+  --accent: 220 14% 94%;
+  --accent-foreground: 216 11% 9%;
+
+  --destructive: 0 67% 58%;       /* #DC4C4C */
+  --destructive-foreground: 0 0% 100%;
+  --destructive-soft: 0 76% 96%;
+
+  --border: 220 13% 91%;
+  --input: 220 13% 88%;
+  --ring: 243 90% 66%;
+
+  --success: 155 65% 38%;         /* #22A06B */
+  --success-soft: 155 55% 94%;
+  --warning: 37 91% 45%;          /* #F5A623, darkened for text contrast */
+  --warning-soft: 40 90% 94%;
+
+  /* Ink for text/icons sitting *on* a success or warning fill. Both fills
+     flip lightness between themes, so these invert with them. */
+  --success-foreground: 0 0% 100%;
+  --warning-foreground: 0 0% 100%;
+
+  /*
+   * Opaque-button borders. button.tsx and badge.tsx reference
+   * `border-primary-border` and friends; an undefined var() makes
+   * border-color invalid at computed-value time, so filled buttons fell back
+   * to `currentColor` and drew a halo in their own text colour.
+   */
+  --primary-border: hsl(243 70% 60%);
+  --secondary-border: hsl(244 45% 90%);
+  --muted-border: hsl(220 13% 89%);
+  --accent-border: hsl(220 13% 88%);
+  --destructive-border: hsl(0 60% 51%);
+
+  /* ── Sidebar ─────────────────────────────────────────────────────────── */
+  --sidebar: 0 0% 100%;
+  --sidebar-foreground: 216 11% 9%;
+  --sidebar-border: 220 13% 91%;
+  --sidebar-accent: 244 60% 96%;
+  --sidebar-accent-foreground: 244 62% 46%;
+  --sidebar-primary: 243 90% 66%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-ring: 243 90% 66%;
+
+  /* ── Subject identity ────────────────────────────────────────────────── */
+  --subject-math: 221 72% 52%;      /* blue      */
+  --subject-science: 168 62% 33%;   /* teal      */
+  --subject-social: 28 78% 45%;     /* amber     */
+  --subject-english: 280 44% 52%;   /* violet    */
+  --subject-hindi: 346 62% 52%;     /* rose      */
+
+  /* ── Type ────────────────────────────────────────────────────────────── */
+  --app-font-sans: 'Manrope', 'Inter', system-ui, -apple-system, sans-serif;
+  --app-font-serif: 'Source Serif 4', Georgia, serif;
+  --app-font-mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+
+  --radius: 0.625rem; /* 10px */
+
+  /* ── Elevation ───────────────────────────────────────────────────────── */
+  --sf-shadow-xs: 0 1px 2px 0 rgb(16 24 40 / 0.04);
+  --sf-shadow-sm: 0 1px 3px 0 rgb(16 24 40 / 0.05), 0 1px 2px -1px rgb(16 24 40 / 0.04);
+  --sf-shadow-md: 0 6px 16px -6px rgb(16 24 40 / 0.10), 0 2px 4px -2px rgb(16 24 40 / 0.04);
+  --sf-shadow-lg: 0 16px 40px -12px rgb(16 24 40 / 0.16);
+
+  /*
+   * Chrome heights, so page shells size against the real viewport instead of
+   * guessing. The header is h-14; the router reserves space for the fixed
+   * mobile bottom nav.
+   */
+  --header-h: 3.5rem;
+  --nav-h: 4.25rem;
+}
+
+/* The bottom nav is md:hidden, so above that breakpoint it costs nothing. */
+@media (min-width: 768px) {
+  :root {
+    --nav-h: 0rem;
+  }
+}
+
+/* ── Dark: "Study Night" ───────────────────────────────────────────────────
+   Not an inversion. The background is a near-black slate, surfaces step up in
+   lightness rather than down, borders stay low-contrast, and the brand shifts
+   to a lighter periwinkle so it stops vibrating against the dark. */
+.dark {
+  --button-outline: hsl(225 8% 26%);
+  --badge-outline: hsl(225 8% 24%);
+  --opaque-button-border-intensity: 9;
+  --elevate-1: rgb(255 255 255 / 0.04);
+  --elevate-2: rgb(255 255 255 / 0.08);
+
+  --background: 225 11% 7%;       /* #101114 */
+  --foreground: 220 16% 96%;      /* #F4F5F7 */
+
+  --card: 223 13% 10%;            /* #17191E */
+  --card-foreground: 220 16% 96%;
+  --card-border: 225 9% 19%;
+
+  --popover: 225 12% 13%;         /* #1E2026 */
+  --popover-foreground: 220 16% 96%;
+  --popover-border: 225 9% 22%;
+
+  --primary: 243 100% 76%;        /* #8B85FF */
+  --primary-foreground: 225 11% 7%;
+
+  --secondary: 244 22% 20%;
+  --secondary-foreground: 243 85% 86%;
+
+  --muted: 225 12% 15%;
+  --muted-foreground: 218 11% 65%; /* #9CA3AF */
+
+  --accent: 225 10% 18%;
+  --accent-foreground: 220 16% 96%;
+
+  --destructive: 0 72% 68%;
+  --destructive-foreground: 225 11% 7%;
+  --destructive-soft: 0 32% 18%;
+
+  --border: 225 9% 19%;
+  --input: 225 9% 24%;
+  --ring: 243 100% 76%;
+
+  --success: 155 50% 55%;
+  --success-soft: 157 32% 15%;
+  --warning: 38 92% 62%;
+  --warning-soft: 36 40% 16%;
+
+  --success-foreground: 225 11% 7%;
+  --warning-foreground: 225 11% 7%;
+
+  --primary-border: hsl(243 80% 70%);
+  --secondary-border: hsl(244 20% 27%);
+  --muted-border: hsl(225 9% 19%);
+  --accent-border: hsl(225 9% 22%);
+  --destructive-border: hsl(0 60% 60%);
+
+  --sidebar: 223 13% 10%;
+  --sidebar-foreground: 220 16% 96%;
+  --sidebar-border: 225 9% 18%;
+  --sidebar-accent: 244 24% 22%;
+  --sidebar-accent-foreground: 243 90% 86%;
+  --sidebar-primary: 243 100% 76%;
+  --sidebar-primary-foreground: 225 11% 7%;
+  --sidebar-ring: 243 100% 76%;
+
+  --subject-math: 221 80% 70%;
+  --subject-science: 168 45% 55%;
+  --subject-social: 32 80% 62%;
+  --subject-english: 280 55% 72%;
+  --subject-hindi: 346 70% 68%;
+
+  --sf-shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.5);
+  --sf-shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.5), 0 1px 2px -1px rgb(0 0 0 / 0.4);
+  --sf-shadow-md: 0 6px 16px -6px rgb(0 0 0 / 0.6), 0 2px 4px -2px rgb(0 0 0 / 0.4);
+  --sf-shadow-lg: 0 16px 40px -12px rgb(0 0 0 / 0.7);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Optional themes
+   ───────────────────────────────────────────────────────────────────────────
+   Each block only overrides the tokens that carry the theme's identity —
+   surfaces, accent, and the tints derived from them. Everything else inherits
+   from `:root` (light themes) or `.dark` (dark themes), which is why a theme
+   can never leave a token undefined and break a component.
+
+   The `dark` class is applied alongside `data-theme` for every dark theme, so
+   the ~400 `dark:` utilities already in the codebase keep working untouched.
+   These selectors have the same specificity as `.dark` and come later in the
+   file, so they win.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Paper ─────────────────────────────────────────────────────────────────
+   Warm off-white with a sienna accent. Reads like a well-lit notebook; the
+   background is tinted rather than grey so long reading sessions feel less
+   clinical than Study Light. */
+[data-theme="paper"] {
+  --button-outline: hsl(36 22% 84%);
+  --badge-outline: hsl(36 22% 86%);
+  --elevate-1: rgb(60 42 20 / 0.04);
+  --elevate-2: rgb(60 42 20 / 0.08);
+
+  --background: 40 32% 95%;        /* #F5F1E8 */
+  --foreground: 28 16% 13%;        /* #261F18 */
+
+  --card: 42 45% 99%;              /* #FFFDF8 */
+  --card-foreground: 28 16% 13%;
+  --card-border: 38 24% 87%;
+
+  --popover: 42 45% 99%;
+  --popover-foreground: 28 16% 13%;
+  --popover-border: 38 24% 85%;
+
+  --primary: 20 62% 42%;           /* #AB5A2E */
+  --primary-foreground: 42 60% 98%;
+
+  --secondary: 34 45% 92%;
+  --secondary-foreground: 22 52% 34%;
+
+  --muted: 38 28% 92%;
+  --muted-foreground: 30 10% 42%;
+
+  --accent: 36 26% 90%;
+  --accent-foreground: 28 16% 13%;
+
+  --border: 38 24% 87%;
+  --input: 38 22% 83%;
+  --ring: 20 62% 42%;
+
+  --destructive-soft: 8 60% 94%;
+  --success: 152 48% 32%;
+  --success-soft: 150 38% 92%;
+  --warning: 30 78% 40%;
+  --warning-soft: 38 72% 92%;
+
+  --primary-border: hsl(20 55% 37%);
+  --secondary-border: hsl(34 38% 85%);
+  --muted-border: hsl(38 24% 85%);
+  --accent-border: hsl(36 24% 84%);
+
+  --sidebar: 42 45% 99%;
+  --sidebar-foreground: 28 16% 13%;
+  --sidebar-border: 38 24% 87%;
+  --sidebar-accent: 34 45% 92%;
+  --sidebar-accent-foreground: 22 55% 33%;
+  --sidebar-primary: 20 62% 42%;
+  --sidebar-primary-foreground: 42 60% 98%;
+  --sidebar-ring: 20 62% 42%;
+
+  --subject-math: 214 62% 42%;
+  --subject-science: 166 55% 28%;
+  --subject-social: 24 72% 40%;
+  --subject-english: 278 38% 45%;
+  --subject-hindi: 344 55% 45%;
+}
+
+/* ── Forest ────────────────────────────────────────────────────────────────
+   A quiet sage paper. The accent is a deep evergreen, dark enough to carry
+   white text, so "correct" green and "brand" green never collide — success
+   stays a distinctly lighter, warmer green. */
+[data-theme="forest"] {
+  --button-outline: hsl(146 14% 84%);
+  --badge-outline: hsl(146 14% 86%);
+  --elevate-1: rgb(18 40 28 / 0.035);
+  --elevate-2: rgb(18 40 28 / 0.07);
+
+  --background: 140 20% 96%;       /* #F1F6F2 */
+  --foreground: 158 18% 11%;       /* #172119 */
+
+  --card: 150 30% 99%;             /* #FAFDFB */
+  --card-foreground: 158 18% 11%;
+  --card-border: 145 16% 88%;
+
+  --popover: 150 30% 99%;
+  --popover-foreground: 158 18% 11%;
+  --popover-border: 145 16% 86%;
+
+  --primary: 160 52% 30%;          /* #24745A */
+  --primary-foreground: 150 40% 98%;
+
+  --secondary: 152 34% 92%;
+  --secondary-foreground: 162 46% 26%;
+
+  --muted: 146 20% 93%;
+  --muted-foreground: 155 9% 40%;
+
+  --accent: 146 18% 91%;
+  --accent-foreground: 158 18% 11%;
+
+  --border: 145 16% 88%;
+  --input: 145 15% 84%;
+  --ring: 160 52% 30%;
+
+  --success: 132 52% 34%;
+  --success-soft: 132 42% 92%;
+  --warning: 36 84% 38%;
+  --warning-soft: 40 76% 92%;
+  --destructive-soft: 2 62% 95%;
+
+  --primary-border: hsl(160 48% 26%);
+  --secondary-border: hsl(152 28% 85%);
+  --muted-border: hsl(145 16% 86%);
+  --accent-border: hsl(146 16% 85%);
+
+  --sidebar: 150 30% 99%;
+  --sidebar-foreground: 158 18% 11%;
+  --sidebar-border: 145 16% 88%;
+  --sidebar-accent: 152 34% 92%;
+  --sidebar-accent-foreground: 162 48% 25%;
+  --sidebar-primary: 160 52% 30%;
+  --sidebar-primary-foreground: 150 40% 98%;
+  --sidebar-ring: 160 52% 30%;
+
+  --subject-math: 212 62% 42%;
+  --subject-science: 172 58% 26%;
+  --subject-social: 28 72% 40%;
+  --subject-english: 272 40% 48%;
+  --subject-hindi: 344 56% 46%;
+}
+
+/* ── Midnight ──────────────────────────────────────────────────────────────
+   Deep navy rather than neutral slate. The accent is a clear sky blue that
+   stays legible on the darkest surface without the glow a saturated indigo
+   picks up at this lightness. */
+[data-theme="midnight"] {
+  --button-outline: hsl(222 22% 28%);
+  --badge-outline: hsl(222 22% 26%);
+
+  --background: 224 42% 6%;        /* #080C16 */
+  --foreground: 213 30% 95%;
+
+  --card: 223 34% 11%;             /* #12182A */
+  --card-foreground: 213 30% 95%;
+  --card-border: 222 26% 21%;
+
+  --popover: 223 32% 14%;
+  --popover-foreground: 213 30% 95%;
+  --popover-border: 222 26% 24%;
+
+  --primary: 213 92% 70%;          /* #6BAEFB */
+  --primary-foreground: 224 42% 8%;
+
+  --secondary: 220 34% 21%;
+  --secondary-foreground: 213 84% 84%;
+
+  --muted: 222 28% 16%;
+  --muted-foreground: 215 18% 68%;
+
+  --accent: 222 26% 19%;
+  --accent-foreground: 213 30% 95%;
+
+  --border: 222 26% 21%;
+  --input: 222 24% 26%;
+  --ring: 213 92% 70%;
+
+  --success: 158 52% 56%;
+  --success-soft: 160 34% 15%;
+  --warning: 38 90% 64%;
+  --warning-soft: 34 42% 16%;
+  --destructive-soft: 356 36% 19%;
+  --success-foreground: 224 42% 8%;
+  --warning-foreground: 224 42% 8%;
+  --destructive-foreground: 224 42% 8%;
+
+  --primary-border: hsl(213 78% 64%);
+  --secondary-border: hsl(220 30% 28%);
+  --muted-border: hsl(222 26% 21%);
+  --accent-border: hsl(222 26% 24%);
+
+  --sidebar: 223 34% 11%;
+  --sidebar-foreground: 213 30% 95%;
+  --sidebar-border: 222 26% 20%;
+  --sidebar-accent: 220 36% 23%;
+  --sidebar-accent-foreground: 213 88% 86%;
+  --sidebar-primary: 213 92% 70%;
+  --sidebar-primary-foreground: 224 42% 8%;
+  --sidebar-ring: 213 92% 70%;
+
+  --subject-math: 213 88% 72%;
+  --subject-science: 168 52% 58%;
+  --subject-social: 34 84% 64%;
+  --subject-english: 276 62% 74%;
+  --subject-hindi: 344 74% 70%;
+}
+
+/* ── Ocean ─────────────────────────────────────────────────────────────────
+   Deep teal slate. The cyan accent is the brightest of the six, so it is kept
+   to fills and rules; body text stays on the near-white foreground token. */
+[data-theme="ocean"] {
+  --button-outline: hsl(200 20% 27%);
+  --badge-outline: hsl(200 20% 25%);
+
+  --background: 202 38% 8%;        /* #0D181E */
+  --foreground: 195 24% 95%;
+
+  --card: 201 30% 12%;             /* #16242B */
+  --card-foreground: 195 24% 95%;
+  --card-border: 200 22% 22%;
+
+  --popover: 201 28% 15%;
+  --popover-foreground: 195 24% 95%;
+  --popover-border: 200 22% 25%;
+
+  --primary: 187 78% 56%;          /* #34C6DB */
+  --primary-foreground: 202 40% 9%;
+
+  --secondary: 195 30% 21%;
+  --secondary-foreground: 187 70% 80%;
+
+  --muted: 200 24% 17%;
+  --muted-foreground: 197 14% 68%;
+
+  --accent: 200 22% 20%;
+  --accent-foreground: 195 24% 95%;
+
+  --border: 200 22% 22%;
+  --input: 200 20% 27%;
+  --ring: 187 78% 56%;
+
+  --success: 152 50% 54%;
+  --success-soft: 158 32% 15%;
+  --warning: 36 88% 62%;
+  --warning-soft: 32 40% 16%;
+  --destructive-soft: 356 34% 19%;
+  --success-foreground: 202 40% 9%;
+  --warning-foreground: 202 40% 9%;
+  --destructive-foreground: 202 40% 9%;
+
+  --primary-border: hsl(187 66% 50%);
+  --secondary-border: hsl(195 26% 28%);
+  --muted-border: hsl(200 22% 22%);
+  --accent-border: hsl(200 22% 25%);
+
+  --sidebar: 201 30% 12%;
+  --sidebar-foreground: 195 24% 95%;
+  --sidebar-border: 200 22% 21%;
+  --sidebar-accent: 195 32% 23%;
+  --sidebar-accent-foreground: 187 74% 82%;
+  --sidebar-primary: 187 78% 56%;
+  --sidebar-primary-foreground: 202 40% 9%;
+  --sidebar-ring: 187 78% 56%;
+
+  --subject-math: 208 82% 68%;
+  --subject-science: 168 60% 56%;
+  --subject-social: 34 82% 62%;
+  --subject-english: 274 58% 74%;
+  --subject-hindi: 344 70% 70%;
+}
+
+/* ═══ Accessibility & density preferences ══════════════════════════════════
+   Set as data attributes on <html> by usePreferenceSideEffects, so a
+   preference can change the whole app without every component subscribing. */
+
+/*
+ * Reduced motion. Honours the OS setting and the in-app one, and it is a
+ * genuine stop rather than a slowdown: transforms and opacity fades are
+ * removed, not shortened. `scroll-behavior: auto` matters too — a smooth
+ * programmatic scroll is exactly the kind of movement that triggers
+ * vestibular symptoms.
+ */
+:root[data-motion="reduced"] *,
+:root[data-motion="reduced"] *::before,
+:root[data-motion="reduced"] *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+:root[data-motion="reduced"] {
+  scroll-behavior: auto;
+}
+
+/*
+ * Compact density: the same layouts, tighter. Only PageShell's vertical rhythm
+ * and Panel's inner padding read these, so nothing reflows unexpectedly — a
+ * density control that moved every gap in the app would be a second design.
+ */
+:root {
+  --sf-page-y: 1.5rem;
+  --sf-card-p: 1rem;
+}
+:root[data-density="compact"] {
+  --sf-page-y: 0.875rem;
+  --sf-card-p: 0.75rem;
+}
+@media (min-width: 640px) {
+  :root {
+    --sf-page-y: 2rem;
+    --sf-card-p: 1.25rem;
+  }
+  :root[data-density="compact"] {
+    --sf-page-y: 1.125rem;
+    --sf-card-p: 0.875rem;
+  }
+}
+
+/*
+ * The reader steps aside for the Study Workspace.
+ *
+ * With the panel docked, a centred PDF dialog would sit underneath it — the
+ * student would click "Chapter summary" and lose sight of the chapter. These
+ * two rules move the reader left by exactly the panel's width so the document
+ * and the summary are side by side, which is the layout the feature promises.
+ *
+ * Desktop only: on a phone the panel is a bottom sheet that covers the reader
+ * deliberately, because nothing useful fits beside it at that width.
+ */
+@media (min-width: 1024px) {
+  :root[data-workspace="open"] .sf-pdf-dialog {
+    max-width: min(56rem, calc(100vw - 30rem));
+    transform: translate(calc(-50% - 13rem), -50%);
+  }
+  :root[data-workspace="wide"] .sf-pdf-dialog {
+    /* The widened panel leaves little room; shrink rather than overlap. */
+    max-width: min(36rem, calc(100vw - 60rem));
+    transform: translate(calc(-50% - 28rem), -50%);
+  }
+}
+
+/* High contrast: stronger borders and a heavier focus ring. Deliberately does
+   not repaint the palette — swapping in pure black/white would break the
+   themes the student chose. */
+:root[data-contrast="high"] {
+  --card-border: var(--foreground);
+  --border: var(--foreground);
+}
+:root[data-contrast="high"] * {
+  border-color: hsl(var(--foreground) / 0.35);
+}
+:root[data-contrast="high"] :focus-visible {
+  outline-width: 3px;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    font-feature-settings: "cv11", "ss01";
+  }
+
+  /* Anchor jumps used to land underneath the sticky header. */
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: calc(var(--header-h) + 1rem);
+  }
+
+  /* Headings break on meaning rather than leaving a one-word last line. */
+  h1, h2, h3, h4 {
+    text-wrap: balance;
+    letter-spacing: -0.015em;
+  }
+  p, li {
+    text-wrap: pretty;
+  }
+
+  /* Long unbroken strings — formulae, pasted URLs — must not force the page
+     to scroll sideways on a phone. */
+  p, li, td, th, dd, blockquote {
+    overflow-wrap: break-word;
+  }
+
+  ::selection {
+    background-color: hsl(var(--primary) / 0.2);
+  }
+
+  /* One visible keyboard-focus treatment for everything. */
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+
+  /* Theme-aware scrollbars — the default light-grey ones fought dark mode. */
+  * {
+    scrollbar-color: hsl(var(--muted-foreground) / 0.3) transparent;
+    scrollbar-width: thin;
+  }
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--muted-foreground) / 0.28);
+    border: 3px solid transparent;
+    border-radius: 9999px;
+    background-clip: content-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: hsl(var(--muted-foreground) / 0.45);
+  }
+
+  /* Numbers that sit in columns or tick upward should not reflow. */
+  [data-numeric], .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Inputs read as recessed wells in dark mode rather than floating panes. */
+  .dark input,
+  .dark textarea,
+  .dark select {
+    background-color: hsl(var(--background));
+  }
+}
+
+/* ═══ Interaction primitives ═══════════════════════════════════════════════ */
+@layer components {
+  /*
+   * button.tsx and badge.tsx have always applied `hover-elevate` and
+   * `active-elevate-2` — but nothing defined them, so every button in the app
+   * was inert. Implemented as an overlay rather than a background swap so it
+   * composes over whatever fill the element already has.
+   */
+  .hover-elevate,
+  .active-elevate-2,
+  .toggle-elevate {
+    position: relative;
+  }
+
+  .hover-elevate::after,
+  .active-elevate-2::after,
+  .toggle-elevate::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background-color: transparent;
+    transition: background-color 140ms var(--ease-out);
+  }
+
+  /* hover:hover keeps the tint from sticking after a tap on touch devices. */
+  @media (hover: hover) {
+    .hover-elevate:hover::after {
+      background-color: var(--elevate-1);
+    }
+  }
+
+  .active-elevate-2:active::after {
+    background-color: var(--elevate-2);
+  }
+
+  .toggle-elevate[data-state="on"]::after,
+  .toggle-elevate[aria-pressed="true"]::after {
+    background-color: var(--elevate-1);
+  }
+
+  .hover-elevate:disabled::after,
+  .active-elevate-2:disabled::after,
+  .hover-elevate[aria-disabled="true"]::after,
+  .active-elevate-2[aria-disabled="true"]::after,
+  .hover-elevate[data-disabled]::after,
+  .active-elevate-2[data-disabled]::after {
+    background-color: transparent;
+  }
+
+  /* ── Type scale ──────────────────────────────────────────────────────────
+     Named steps rather than a size class picked per screen. Before this,
+     page titles appeared at text-2xl, text-3xl and text-xl on different
+     routes, all claiming to be the same level. */
+
+  .text-display {
+    font-size: clamp(2rem, 1.45rem + 2.4vw, 2.75rem);
+    line-height: 1.06;
+    font-weight: 800;
+    letter-spacing: -0.035em;
+  }
+
+  .text-page-title {
+    font-size: clamp(1.5rem, 1.28rem + 0.9vw, 1.875rem);
+    line-height: 1.15;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+  }
+
+  .text-section {
+    font-size: 1.0625rem;
+    line-height: 1.35;
+    font-weight: 650;
+    letter-spacing: -0.015em;
+  }
+
+  .text-card-title {
+    font-size: 0.9375rem;
+    line-height: 1.35;
+    font-weight: 600;
+    letter-spacing: -0.008em;
+  }
+
+  .text-meta {
+    font-size: 0.75rem;
+    line-height: 1.4;
+    font-weight: 500;
+  }
+
+  /* The small all-caps label above a title. Used once per section, not as
+     decoration. */
+  .text-eyebrow {
+    font-size: 0.6875rem;
+    line-height: 1.3;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* ── Notebook character ──────────────────────────────────────────────────
+     A study product should feel a little like a well-kept notebook. That is
+     carried by three things only — a left rule on callouts, a highlighter
+     for the sentence that matters, and a monospaced formula block. No paper
+     textures, no handwriting. */
+
+  /* Callout: a bordered block with a coloured left rule. Tone is set by
+     `--callout-hue`, so one rule covers concept / tip / warning / mistake. */
+  .sf-callout {
+    position: relative;
+    border: 1px solid hsl(var(--callout-hue) / 0.22);
+    border-left-width: 3px;
+    border-left-color: hsl(var(--callout-hue));
+    background-color: hsl(var(--callout-hue) / 0.05);
+    border-radius: var(--radius-md);
+    padding: 0.875rem 1rem;
+  }
+  .dark .sf-callout {
+    background-color: hsl(var(--callout-hue) / 0.09);
+    border-color: hsl(var(--callout-hue) / 0.28);
+    border-left-color: hsl(var(--callout-hue));
+  }
+
+  /* Highlighter. Sits behind the text like a marker pen, and stays legible
+     in dark mode where a yellow wash would blow out. */
+  .sf-highlight {
+    background-image: linear-gradient(
+      to top,
+      hsl(var(--warning) / 0.28) 0.65em,
+      transparent 0.65em
+    );
+    padding-inline: 0.1em;
+  }
+  .dark .sf-highlight {
+    background-image: linear-gradient(
+      to top,
+      hsl(var(--warning) / 0.22) 0.65em,
+      transparent 0.65em
+    );
+  }
+
+  /* Formula block — centred, monospaced, scrolls on its own if it must. */
+  .sf-formula {
+    font-family: var(--font-mono);
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    background-color: hsl(var(--muted));
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--radius-md);
+    padding: 0.75rem 1rem;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+  }
+
+  /*
+   * Long-form answer prose. The one place a serif is used, and for a reason:
+   * a 5-mark answer is read the way a textbook page is read, and the extra
+   * line height plus a measured column is what makes 45 minutes of it
+   * bearable. Everything else in the product is the sans.
+   */
+  .answer-prose {
+    font-family: var(--font-serif);
+    font-size: 1.0625rem;
+    line-height: 1.75;
+    letter-spacing: 0.003em;
+  }
+  .answer-prose p + p {
+    margin-top: 0.85em;
+  }
+  @media (max-width: 480px) {
+    .answer-prose {
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+  }
+
+  /* ── Skeletons ───────────────────────────────────────────────────────────
+     A shimmer that matches the shape of what is coming, not a spinner that
+     tells you nothing. */
+  .sf-skeleton {
+    position: relative;
+    overflow: hidden;
+    background-color: hsl(var(--muted));
+    border-radius: var(--radius-md);
+  }
+  .sf-skeleton::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(
+      90deg,
+      transparent,
+      hsl(var(--foreground) / 0.045),
+      transparent
+    );
+    animation: sf-shimmer 1.6s infinite;
+  }
+
+  @keyframes sf-shimmer {
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  /* A row of pulsing dots for "the model is working". Deliberately small. */
+  .sf-thinking-dot {
+    animation: sf-thinking 1.1s ease-in-out infinite;
+  }
+  .sf-thinking-dot:nth-child(2) { animation-delay: 0.15s; }
+  .sf-thinking-dot:nth-child(3) { animation-delay: 0.3s; }
+
+  @keyframes sf-thinking {
+    0%, 60%, 100% { opacity: 0.25; }
+    30% { opacity: 1; }
+  }
+}
+
+/* ═══ Utilities ════════════════════════════════════════════════════════════ */
+@layer utilities {
+  /*
+   * Exactly the space below the header and above the mobile nav.
+   *
+   * Page shells had three different ideas of how tall the viewport is —
+   * `min-h-screen` (subtracting nothing, so those pages carried 3.5rem of
+   * dead scroll), `calc(100vh-4rem)` and `calc(100vh-3.5rem)`. One class,
+   * measured against the real chrome, in dvh so a phone address bar doesn't
+   * throw it off.
+   */
+  .min-h-viewport {
+    min-height: calc(100dvh - var(--header-h) - var(--nav-h));
+  }
+
+  /* Hides a scroll container's bar without disabling scrolling. */
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Horizontal chip rails: scroll on small screens, snap, no visible bar. */
+  .rail {
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    gap: 0.5rem;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+  }
+  .rail::-webkit-scrollbar {
+    display: none;
+  }
+  .rail > * {
+    scroll-snap-align: start;
+    flex: none;
+  }
+
+  /*
+   * Anything wide that cannot wrap — a comparison table, a mermaid diagram,
+   * a long equation — scrolls inside its own box instead of making the page
+   * scroll sideways.
+   */
+  .scroll-x {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Content column for reading. ~68 characters at the body size. */
+  .measure {
+    max-width: 68ch;
+  }
+
+  /* The one entrance animation in the product: content settling into place
+     after it loads. 180ms, 4px, no bounce. */
+  .animate-rise {
+    animation: sf-rise 180ms var(--ease-out) both;
+  }
+
+  @keyframes sf-rise {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+/*
+ * Respect the OS "reduce motion" setting. The app uses entrance, shimmer and
+ * progress transitions in a lot of places; for students who get motion
+ * sickness or find movement distracting, none of it should fire.
+ */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

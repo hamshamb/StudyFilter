@@ -1,0 +1,132 @@
+kind = "web"
+previewPath = "/"
+title = "StudyFilter"
+version = "1.0.0"
+id = "artifacts/study-filter"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 22616
+
+[services.development]
+run = "pnpm --filter @workspace/study-filter run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/study-filter", "run", "build" ]
+publicDir = "artifacts/study-filter/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/"
+to = "/index.html"
+
+[[services.production.rewrites]]
+from = "/chat"
+to = "/index.html"
+
+[[services.production.rewrites]]
+from = "/subjects"
+to = "/subjects.html"
+
+[[services.production.rewrites]]
+from = "/subjects/*"
+to = "/subjects.html"
+
+[[services.production.rewrites]]
+from = "/practice"
+to = "/practice.html"
+
+# The five study actions. Each is a real route with its own state, so each
+# needs its own rewrite or a shared link like
+# /quiz?subject=science&chapter=electricity returns a text/plain 404 in
+# production while working perfectly when reached from the sidebar.
+[[services.production.rewrites]]
+from = "/quiz"
+to = "/index.html"
+
+[[services.production.rewrites]]
+from = "/revise"
+to = "/index.html"
+
+[[services.production.rewrites]]
+from = "/explain"
+to = "/index.html"
+
+[[services.production.rewrites]]
+from = "/solve"
+to = "/index.html"
+
+[[services.production.rewrites]]
+from = "/flashcards"
+to = "/index.html"
+
+[[services.production.rewrites]]
+from = "/dashboard"
+to = "/index.html"
+
+[[services.production.rewrites]]
+from = "/saved"
+to = "/index.html"
+
+[[services.production.rewrites]]
+from = "/library"
+to = "/library.html"
+
+[[services.production.rewrites]]
+from = "/library/*"
+to = "/library.html"
+
+[[services.production.rewrites]]
+from = "/plan"
+to = "/index.html"
+
+[[services.production.rewrites]]
+from = "/focus"
+to = "/index.html"
+
+[[services.production.rewrites]]
+from = "/settings"
+to = "/index.html"
+
+# Every client route needs a line here or the deployed site returns a plain
+# text/plain 404 for it — the SPA is served as static files, so a path with no
+# rewrite never reaches the router in App.tsx. Navigating from the sidebar
+# still works (wouter handles it client-side), which is what makes this easy
+# to miss: only a direct link, a refresh, or a shared URL fails.
+[[services.production.rewrites]]
+from = "/leaderboard"
+to = "/index.html"
+
+[[services.production.rewrites]]
+from = "/map-practice"
+to = "/index.html"
+
+[[services.production.rewrites]]
+from = "/maps"
+to = "/index.html"
+
+[[services.production.rewrites]]
+from = "/tools/periodic-table"
+to = "/index.html"
+
+[[services.production.rewrites]]
+from = "/compare"
+to = "/index.html"
+
+[[services.production.rewrites]]
+from = "/sign-in/*"
+to = "/index.html"
+
+[[services.production.rewrites]]
+from = "/sign-up/*"
+to = "/index.html"
+
+[services.env]
+PORT = "22616"
+BASE_PATH = "/"

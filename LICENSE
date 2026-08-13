@@ -1,0 +1,137 @@
+STUDYFILTER PROPRIETARY SOURCE CODE LICENSE
+ALL RIGHTS RESERVED
+
+Copyright (c) 2026 Hamshamb / StudyFilter. All rights reserved.
+
+IMPORTANT: THIS IS NOT AN OPEN-SOURCE LICENSE.
+
+1. Ownership
+
+The StudyFilter source code, documentation, designs, original graphics,
+databases, compilations, and other original materials in this repository
+(collectively, the "Repository Materials") are proprietary works owned by
+Hamshamb / StudyFilter (the "Owner"), except for third-party materials
+identified in Section 8.
+
+Access to this repository, possession of a copy, or visibility of any
+Repository Materials does not transfer ownership and does not grant any
+license or permission except as expressly stated in this document.
+
+2. Permitted Use of the Hosted Website
+
+Members of the public may access and use the functionality made available
+through the normal user interface of the official hosted website at
+https://studyfilter.online for its intended educational purpose, subject to
+any terms, policies, usage limits, and access controls displayed on or
+applicable to that website.
+
+Permission to use the hosted website does not grant permission to use,
+download, copy, extract, reproduce, modify, distribute, publish, or host its
+source code, assets, data, or Repository Materials.
+
+3. No Source-Code License Granted
+
+Except where the Owner gives prior express written permission in a separate
+signed or otherwise verifiable written agreement, no person or organisation
+may use the Repository Materials for any purpose, including personal,
+private, educational, research, non-profit, internal, or commercial purposes.
+
+No implied license is granted. Attribution, repository access, possession of
+a copy, or submission of a contribution does not create permission.
+
+4. Prohibited Acts
+
+Without the Owner's prior express written permission, you must not, in whole
+or in part:
+
+  a. download, copy, reproduce, or retain the Repository Materials, except
+     for temporary technical copies made automatically by GitHub or a web
+     browser solely to display an authorised repository page;
+
+  b. use, run, compile, build, test, study, modify, adapt, translate,
+     reverse-engineer, or create derivative works from the Repository
+     Materials;
+
+  c. publish, upload, mirror, fork for independent use, distribute,
+     transmit, sublicense, sell, rent, lend, share, or otherwise make the
+     Repository Materials available to another person;
+
+  d. deploy, host, operate, or make available any website, application,
+     service, product, or system containing, derived from, or substantially
+     reproducing the Repository Materials;
+
+  e. use the Repository Materials, the StudyFilter name, or StudyFilter's
+     visual identity for profit, advertising, training, portfolio claims,
+     competitive products, or any other commercial purpose;
+
+  f. remove, hide, alter, or misrepresent any copyright, ownership,
+     attribution, trademark, or licensing notice; or
+
+  g. claim authorship, ownership, endorsement, affiliation, or official
+     status in relation to StudyFilter or the Repository Materials.
+
+5. Written Permission Required
+
+Any permitted source-code use requires the Owner's prior express written
+permission. The permission must identify the authorised person or entity,
+the exact materials, the permitted purpose, the duration, and any other
+conditions. Permission is limited to that written scope, is non-transferable,
+and may not be sublicensed unless the written permission expressly says so.
+
+The Owner may approve or refuse a request at the Owner's sole discretion and
+may require a separate commercial licence or fee.
+
+6. Attribution When Permission Is Granted
+
+Unless the Owner expressly waives or replaces the requirement in writing,
+every authorised use must prominently display:
+
+  "StudyFilter — Copyright (c) 2026 Hamshamb / StudyFilter.
+   Used with permission. https://studyfilter.online"
+
+Attribution is an additional condition of authorised use. Providing credit
+without first obtaining written permission does not authorise any use.
+
+7. Contributions
+
+No contribution grants the contributor a licence to use the Repository
+Materials outside the specific contribution workflow authorised by the
+Owner. The licensing and ownership of an accepted contribution must be
+agreed with the Owner in writing before acceptance.
+
+8. Third-Party Materials
+
+Third-party software, dependencies, trademarks, educational documents, and
+other third-party materials remain subject to their respective owners' terms
+and licences. This document neither restricts rights independently granted by
+those third parties nor grants rights that the Owner does not possess.
+
+9. Enforcement and Remedies
+
+Any use outside the permissions expressly granted above is unauthorised. The
+Owner reserves the right to revoke repository or service access, demand that
+unauthorised copies, deployments, and derivative works be removed, and pursue
+all remedies available under applicable law. Depending on the jurisdiction
+and circumstances, those remedies may include injunctive relief, damages,
+recovery of profits, legal costs, and other relief available to the Owner.
+
+Nothing in this document predetermines liability, guarantees a particular
+remedy, or replaces the decision of a court or other competent authority.
+
+10. No Waiver
+
+Failure or delay by the Owner to enforce any right does not waive that right.
+Any waiver must be express and in writing.
+
+11. No Warranty
+
+TO THE MAXIMUM EXTENT PERMITTED BY LAW, THE REPOSITORY MATERIALS ARE PROVIDED
+"AS IS" AND WITHOUT WARRANTIES OF ANY KIND. ACCESS TO THE REPOSITORY DOES NOT
+CREATE A DUTY TO PROVIDE SUPPORT, UPDATES, MAINTENANCE, OR CONTINUED ACCESS.
+
+12. Permission Requests
+
+To request permission, contact the repository owner through the private
+contact method shown on the owner's GitHub profile or the official StudyFilter
+support channel. Do not use or distribute the Repository Materials while a
+request is pending.

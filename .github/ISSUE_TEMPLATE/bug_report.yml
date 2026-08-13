@@ -1,0 +1,39 @@
+name: Bug report
+description: Report a reproducible StudyFilter problem
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for helping make StudyFilter more reliable. Do not include passwords, tokens, or personal student data.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: Tell us what you expected and what happened instead.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      placeholder: "1. Open…\n2. Click…\n3. See…"
+    validations:
+      required: true
+  - type: input
+    id: route
+    attributes:
+      label: Page or route
+      placeholder: /tools/periodic-table
+  - type: dropdown
+    id: device
+    attributes:
+      label: Device
+      options: [Desktop, Tablet, Mobile]
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Screenshots or logs
+      description: Remove secrets and personal information before attaching evidence.

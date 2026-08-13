@@ -1,0 +1,26 @@
+# StudyFilter
+
+> A distraction-free CBSE study assistant for Class 8–12 students. Students ask one question and receive a clean, exam-ready answer drawn from local CBSE notes and, where needed, an OpenAI fallback. Answers include step-by-step explanations, memory tricks, common mistakes, and built-in quizzes.
+
+## Public pages
+
+- /: Landing page — product overview, feature highlights, and sign-in entry point
+- /subjects: Subject and chapter browser for CBSE Class 8–12 curriculum
+- /library: Curated study resources — NCERT textbook PDFs, sample papers, previous-year question papers, and uploaded documents
+- /practice: Practice questions and exercises organised by subject and chapter
+
+## App-only pages (require sign-in, do not index)
+
+- /chat: AI Coach Chat — ask a CBSE question, receive a structured answer card
+- /dashboard: Student progress — XP, streak, questions solved, accuracy, daily goal
+- /saved: Bookmarked answers and questions
+- /plan: Study planner with task scheduling
+- /focus: Focus Mode — distraction-free full-screen study timer
+- /settings: Account and preferences
+
+## Notes for AI crawlers
+
+- The site is a client-rendered React SPA; all meaningful content is loaded via JavaScript after initial page load.
+- The public pages listed above (/subjects, /library, /practice) contain the primary reference content useful for citation.
+- /chat, /dashboard, /saved, /plan, /focus, and /settings are personalised, session-specific pages and should not be cited or indexed.
+- CBSE subject/chapter content is drawn from official NCERT materials; always prefer linking to the original NCERT source when citing specific textbook content.

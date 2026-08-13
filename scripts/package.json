@@ -1,0 +1,26 @@
+{
+  "name": "@workspace/scripts",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "hello": "tsx ./src/hello.ts",
+    "import-ncert": "tsx ./src/import-ncert-books.ts",
+    "import-selfstudys": "tsx ./src/import-selfstudys-class10.ts",
+    "upload-pdfs": "tsx ./src/upload-pdfs-to-object-storage.ts",
+    "prewarm": "tsx ./src/prewarm-generated-content.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@replit/object-storage": "^1.0.0",
+    "@workspace/cbse-content": "workspace:*",
+    "@workspace/db": "workspace:*",
+    "drizzle-orm": "catalog:",
+    "pg": "^8.22.0"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "@types/pg": "^8.20.0",
+    "tsx": "catalog:"
+  }
+}

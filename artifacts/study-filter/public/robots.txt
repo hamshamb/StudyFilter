@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+Disallow: /chat
+Disallow: /dashboard
+Disallow: /saved
+Disallow: /plan
+Disallow: /focus
+Disallow: /settings
+Disallow: /sign-in
+Disallow: /sign-up
+
+Sitemap: https://studyfilter.online/sitemap.xml
